@@ -1,9 +1,11 @@
 package chat;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /*
 Создать окно клиента чата. Окно должно содержать JtextField для ввода логина, пароля, IP-адреса сервера,
@@ -12,23 +14,14 @@ import java.io.*;
 и отправки сообщения в чат. Желательно сразу сгруппировать компоненты, относящиеся
 к серверу сгруппировать на JPanel сверху экрана, а компоненты, относящиеся к отправке сообщения – на JPanel снизу
  */
-public class ChatWindow extends JFrame{
+public class ChatWindow_old extends JFrame {
     private static final int WINDOW_HEIGHT = 555;
     private static final int WINDOW_WIDTH = 507;
     private static final int WINDOW_POSX = 500;
     private static final int WINDOW_POSY = 100;
     private String message;
-    private static String chatContent;
 
     // лепим панель логина
-
-
-
-
-    JFrame frame = new JFrame("Easy Chat");
-
-
-
     JPanel panelLogin = new JPanel(new GridLayout(1, 2));
     JLabel jLabelLogin = new JLabel("Введите логин: ");
     JTextField jFieldLogin = new JTextField();
@@ -53,19 +46,18 @@ public class ChatWindow extends JFrame{
     JLabel jLabelMessage = new JLabel("Введите ваше сообщение: ");
     JTextField jTextFieldMessage = new JTextField();
     JButton btnPushMsg = new JButton("Отправить сообщение");
+//    String logChat = "";
+//    char[] bufferLog;
 
+    public ChatWindow_old() {
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocation(WINDOW_POSX, WINDOW_POSY);
+        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        setTitle("Chat Window");
+        setResizable(false);
+        setVisible(true);
 
-    public ChatWindow() {
-
-//        frame.setVisible(true);
-
-        frame.setLayout(new GridLayout(9, 1));
-        WindowListener winListener = new WinListener();
-        frame.addWindowListener(winListener);
-        frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        frame.setLocation(WINDOW_POSX, WINDOW_POSY);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        setLayout(new GridLayout(1, 1));
         panelLogin.add(jLabelLogin);
         panelLogin.add(jFieldLogin);
         panelPassword.add(jLabelPassword);
@@ -74,29 +66,17 @@ public class ChatWindow extends JFrame{
         panelIp.add(jFieldIp);
         panelPort.add(jLabelPort);
         panelPort.add(jFieldPort);
-        panelPort.add(jFieldPort);
-
-        frame.add(panelLogin);
-        frame.add(panelPassword);
-        frame.add(panelIp);
-        frame.add(panelPort);
-        frame.add(btnLogin);
-
-        textChatTextArea.setEditable(false);
-
-        frame.add(scrollPane);
-        frame.add(jLabelMessage);
-        frame.add(jTextFieldMessage);
-        frame.add(btnPushMsg);
-        frame.setVisible(true);
-
+        panelMain.add(panelLogin);
+        panelMain.add(panelPassword);
+        panelMain.add(panelIp);
+        panelMain.add(panelPort);
 
 
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    FileInputStream fr = new FileInputStream("src/chat/chat_content.txt");
+                    FileInputStream fr = new FileInputStream("src/chat/chat.txt");
                     int b;
                     while ((b = fr.read()) != -1) {
                         textChatTextArea.append(Character.valueOf((char) b).toString());
@@ -112,8 +92,8 @@ public class ChatWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 message = jFieldLogin.getText() + ": " + jTextFieldMessage.getText();
                 textChatTextArea.append("\n" + message);
-                chatContent = textChatTextArea.getText();
                 System.out.println("Отправлено сообщение: " + jTextFieldMessage.getText());
+                writeChatToFile(jTextFieldMessage.getText(), "src/chat/chat.txt");
                 jTextFieldMessage.setText("");
 
             }
@@ -123,50 +103,36 @@ public class ChatWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 message = jFieldLogin.getText() + ": " + jTextFieldMessage.getText();
-                textChatTextArea.append(message + "\n");
-                chatContent = textChatTextArea.getText();
+                textChatTextArea.append("\n" + message);
+                System.out.println("Отправлено сообщение: " + jTextFieldMessage.getText());
+                writeChatToFile(jTextFieldMessage.getText(), "src/chat/chat.txt");
                 jTextFieldMessage.setText("");
             }
         });
 
+
+//        setLayout(new GridLayout(2, 2));
+        panelMain.add(btnLogin);
+        textChatTextArea.setEditable(false);
+
+        panelMain.add(scrollPane);
+
+        panelMain.add(jLabelMessage);
+        panelMain.add(jTextFieldMessage);
+        panelMain.add(btnPushMsg);
+        add(panelMain);
+        setVisible(true);
+
+//        ChatWindow.writeChatToFile("src/chat/chat_log.txt");
     }
 
-    public static void writeChatToFile(String messages, String fileName) throws IOException {
+    public static void writeChatToFile(String message, String fileName) {
+//        System.out.println("вошли----------------------");
         String chatText = textChatTextArea.getText();
-        if (messages != null ) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false))) {
-                writer.write(messages);
-                writer.flush();
-            }
-        }
-
+        System.out.println("Внести: " + message);
     }
 
-    public static String getChatContent() {
-        return chatContent;
+    public void chatInit() {
+
     }
-
-    public static class WinListener implements WindowListener {
-
-        public void windowActivated(WindowEvent e) {  }
-
-        public void windowClosed(WindowEvent e) {   }
-
-        public void windowClosing(WindowEvent e) {
-            try {
-                writeChatToFile(chatContent, "src/chat/chat_content.txt");
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-        public void windowDeactivated(WindowEvent e) { }
-
-        public void windowDeiconified(WindowEvent e) {  }
-
-        public void windowIconified(WindowEvent e) {  }
-
-        public void windowOpened(WindowEvent e) {  }
-    }
-
 }
