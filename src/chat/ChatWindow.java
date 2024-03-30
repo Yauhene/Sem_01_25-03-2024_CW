@@ -2,8 +2,7 @@ package chat;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -39,12 +38,12 @@ public class ChatWindow extends JFrame {
     JTextField jFieldPort = new JTextField();
 
     JButton btnLogin = new JButton("Подключиться");
-    JTextArea textChatTextArea = new JTextArea();
+    static JTextArea textChatTextArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(textChatTextArea);
     JPanel panelMain = new JPanel(new GridLayout(10, 1));
 
     JLabel jLabelMessage = new JLabel("Введите ваше сообщение: ");
-    JTextArea jTextAreaMessage = new JTextArea();
+    JTextField jTextFieldMessage = new JTextField();
     JButton btnPushMsg = new JButton("Отправить сообщение");
 //    String logChat = "";
 //    char[] bufferLog;
@@ -70,6 +69,8 @@ public class ChatWindow extends JFrame {
         panelMain.add(panelPassword);
         panelMain.add(panelIp);
         panelMain.add(panelPort);
+
+
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -88,13 +89,27 @@ public class ChatWindow extends JFrame {
         btnPushMsg.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                message = jFieldLogin.getText() + ": " + jTextAreaMessage.getText();
+                message = jFieldLogin.getText() + ": " + jTextFieldMessage.getText();
                 textChatTextArea.append("\n" + message);
-                System.out.println("Отправлено сообщение: " + jTextAreaMessage.getText());
-                jTextAreaMessage.setText("");
+                System.out.println("Отправлено сообщение: " + jTextFieldMessage.getText());
+                writeChatToFile(jTextFieldMessage.getText(), "src/chat/chat.txt");
+                jTextFieldMessage.setText("");
 
             }
         });
+
+        jTextFieldMessage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                message = jFieldLogin.getText() + ": " + jTextFieldMessage.getText();
+                textChatTextArea.append("\n" + message);
+                System.out.println("Отправлено сообщение: " + jTextFieldMessage.getText());
+                writeChatToFile(jTextFieldMessage.getText(), "src/chat/chat.txt");
+                jTextFieldMessage.setText("");
+            }
+        });
+
+
 //        setLayout(new GridLayout(2, 2));
         panelMain.add(btnLogin);
         textChatTextArea.setEditable(false);
@@ -102,10 +117,21 @@ public class ChatWindow extends JFrame {
         panelMain.add(scrollPane);
 
         panelMain.add(jLabelMessage);
-        panelMain.add(jTextAreaMessage);
+        panelMain.add(jTextFieldMessage);
         panelMain.add(btnPushMsg);
         add(panelMain);
         setVisible(true);
+
+//        ChatWindow.writeChatToFile("src/chat/chat_log.txt");
+    }
+
+    public static void writeChatToFile(String message, String fileName) {
+//        System.out.println("вошли----------------------");
+        String chatText = textChatTextArea.getText();
+        System.out.println("Внести: " + message);
+    }
+
+    public void chatInit() {
 
     }
 }
