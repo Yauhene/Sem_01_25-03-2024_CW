@@ -56,9 +56,6 @@ public class ChatWindow extends JFrame{
 
 
     public ChatWindow() {
-
-//        frame.setVisible(true);
-
         frame.setLayout(new GridLayout(9, 1));
         WindowListener winListener = new WinListener();
         frame.addWindowListener(winListener);
@@ -91,7 +88,9 @@ public class ChatWindow extends JFrame{
         frame.setVisible(true);
 
 
-
+        /**
+         * Листенер загрузки содержимого чата из файла
+         */
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -107,6 +106,9 @@ public class ChatWindow extends JFrame{
             }
         });
 
+        /**
+         * Листенер кнопки отправки сообщения
+         */
         btnPushMsg.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -119,6 +121,9 @@ public class ChatWindow extends JFrame{
             }
         });
 
+        /**
+         * Метод отправки сообщения по нажатию Enter
+         */
         jTextFieldMessage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,10 +136,16 @@ public class ChatWindow extends JFrame{
 
     }
 
+    /**
+     * Метод записи содержимого чата в файл
+     * @param messages - записываемый текст
+     * @param fileName - имя файла
+     * @throws IOException - ошибка ввода-вывода
+     */
     public static void writeChatToFile(String messages, String fileName) throws IOException {
         String chatText = textChatTextArea.getText();
         if (messages != null ) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, false))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
                 writer.write(messages);
                 writer.flush();
             }
@@ -146,6 +157,9 @@ public class ChatWindow extends JFrame{
         return chatContent;
     }
 
+    /**
+     * Листенер событий окна
+     */
     public static class WinListener implements WindowListener {
 
         public void windowActivated(WindowEvent e) {  }

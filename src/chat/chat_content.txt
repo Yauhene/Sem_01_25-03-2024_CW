@@ -1,5 +1,5 @@
+Dog: Bone
+Dog: Meat
 Cat: Milk
 Cat: Cream
 Cat: Sausage
-Cat: Fish
-Cat: Cheese
